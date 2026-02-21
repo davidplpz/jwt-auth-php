@@ -1,28 +1,28 @@
 # JWT Authentication Service
 
-Servicio de autenticación JWT construido con Symfony 7.4, PHP 8.3 y Docker.
+JWT authentication service built with Symfony 7.4, PHP 8.3 and Docker.
 
-**Principios**: TDD, SOLID, DDD, Arquitectura Hexagonal, Screaming Architecture, Value Objects.
+**Principles**: TDD, SOLID, DDD, Hexagonal Architecture, Screaming Architecture, Value Objects.
 
 ---
 
-## Arquitectura
+## Architecture
 
 ### Screaming Architecture
 
-La estructura de directorios **grita** el propósito del dominio. El nivel superior de `src/` refleja
-bounded contexts, no conceptos técnicos:
+The directory structure **screams** the domain's purpose. The top level of `src/` reflects
+bounded contexts, not technical concepts:
 
 ```
 src/
-├── Auth/                               # Bounded Context: Autenticación
-│   ├── Domain/                         # Núcleo — cero dependencias externas
+├── Auth/                               # Bounded Context: Authentication
+│   ├── Domain/                         # Core — zero external dependencies
 │   │   ├── Model/
 │   │   │   ├── User.php                # Aggregate Root
 │   │   │   ├── UserId.php              # Value Object (UUID)
 │   │   │   ├── Email.php               # Value Object
 │   │   │   ├── HashedPassword.php      # Value Object
-│   │   │   └── PlainPassword.php       # Value Object (validación pre-hash)
+│   │   │   └── PlainPassword.php       # Value Object (pre-hash validation)
 │   │   ├── Event/
 │   │   │   ├── UserRegistered.php      # Domain Event
 │   │   │   └── UserAuthenticated.php   # Domain Event
@@ -32,13 +32,13 @@ src/
 │   │   │   ├── InvalidEmailException.php
 │   │   │   └── WeakPasswordException.php
 │   │   └── Port/
-│   │       └── UserRepository.php      # Puerto (interfaz)
+│   │       └── UserRepository.php      # Port (interface)
 │   │
 │   ├── Application/
 │   │   ├── Port/
-│   │   │   ├── PasswordHasher.php      # Puerto secundario (interfaz)
-│   │   │   ├── TokenGenerator.php      # Puerto secundario (interfaz)
-│   │   │   └── TokenDecoder.php        # Puerto secundario (interfaz)
+│   │   │   ├── PasswordHasher.php      # Secondary port (interface)
+│   │   │   ├── TokenGenerator.php      # Secondary port (interface)
+│   │   │   └── TokenDecoder.php        # Secondary port (interface)
 │   │   ├── Command/
 │   │   │   ├── RegisterUser/
 │   │   │   │   ├── RegisterUserCommand.php
@@ -56,13 +56,13 @@ src/
 │   │
 │   └── Infrastructure/
 │       ├── Persistence/
-│       │   ├── DoctrineUserRepository.php      # Adaptador
+│       │   ├── DoctrineUserRepository.php      # Adapter
 │       │   └── Mapping/
-│       │       └── User.orm.xml                # Mapping Doctrine
+│       │       └── User.orm.xml                # Doctrine Mapping
 │       ├── Security/
-│       │   ├── JwtTokenGenerator.php           # Adaptador
-│       │   ├── JwtTokenDecoder.php             # Adaptador
-│       │   ├── SymfonyPasswordHasher.php       # Adaptador
+│       │   ├── JwtTokenGenerator.php           # Adapter
+│       │   ├── JwtTokenDecoder.php             # Adapter
+│       │   ├── SymfonyPasswordHasher.php       # Adapter
 │       │   └── JwtAuthenticator.php            # Symfony Security
 │       └── Http/
 │           └── Controller/
@@ -73,13 +73,13 @@ src/
 └── Shared/
     └── Domain/
         ├── ValueObject/
-        │   ├── StringValueObject.php           # Base abstracta
-        │   └── UuidValueObject.php             # Base abstracta (UUID)
-        ├── AggregateRoot.php                   # Base con domain events
-        └── DomainEvent.php                     # Interfaz base
+        │   ├── StringValueObject.php           # Abstract base
+        │   └── UuidValueObject.php             # Abstract base (UUID)
+        ├── AggregateRoot.php                   # Base with domain events
+        └── DomainEvent.php                     # Base interface
 ```
 
-### Capas Hexagonales
+### Hexagonal Layers
 
 ```
 ┌─────────────────────────────────────────────────────┐
@@ -89,22 +89,22 @@ src/
 │  ┌─────────────────────────────────────────────┐    │
 │  │              APPLICATION                     │    │
 │  │  Commands, Queries, Handlers, DTOs           │    │
-│  │  Puertos secundarios (interfaces)            │    │
+│  │  Secondary ports (interfaces)                │    │
 │  │                                              │    │
 │  │  ┌──────────────────────────────────────┐   │    │
 │  │  │            DOMAIN                     │   │    │
 │  │  │  Aggregates, Value Objects, Events    │   │    │
-│  │  │  Excepciones, Puertos primarios       │   │    │
-│  │  │  *** CERO dependencias externas ***   │   │    │
+│  │  │  Exceptions, Primary ports            │   │    │
+│  │  │  *** ZERO external dependencies ***   │   │    │
 │  │  └──────────────────────────────────────┘   │    │
 │  └─────────────────────────────────────────────┘    │
 └─────────────────────────────────────────────────────┘
 ```
 
-**Regla de dependencia**: las capas internas NUNCA dependen de las externas. La infraestructura
-depende de aplicación y dominio, aplicación depende de dominio, dominio no depende de nada.
+**Dependency rule**: inner layers NEVER depend on outer ones. Infrastructure
+depends on application and domain, application depends on domain, domain depends on nothing.
 
-### Tests (Estructura espejo)
+### Tests (Mirror Structure)
 
 ```
 tests/
@@ -143,58 +143,58 @@ tests/
 
 ---
 
-## Endpoints (Resumen)
+## Endpoints (Summary)
 
-| Método | Ruta                   | Auth     | Descripción              |
+| Method | Path                   | Auth     | Description              |
 |--------|------------------------|----------|--------------------------|
-| POST   | `/api/auth/register`   | No       | Registrar nuevo usuario  |
-| POST   | `/api/auth/login`      | No       | Autenticarse, obtener JWT|
-| GET    | `/api/auth/profile`    | Bearer   | Ver perfil del usuario   |
-| POST   | `/api/auth/refresh`    | No       | Renovar JWT con refresh  |
+| POST   | `/api/auth/register`   | No       | Register new user        |
+| POST   | `/api/auth/login`      | No       | Authenticate, get JWT    |
+| GET    | `/api/auth/profile`    | Bearer   | View user profile        |
+| POST   | `/api/auth/refresh`    | No       | Refresh JWT token        |
 | GET    | `/api/health`          | No       | Health check             |
 
 ---
 
-## Stack Tecnológico
+## Tech Stack
 
-| Componente       | Tecnología                     |
+| Component        | Technology                     |
 |------------------|--------------------------------|
 | Framework        | Symfony 7.4                    |
 | PHP              | 8.3-FPM                       |
-| Base de datos    | PostgreSQL 16                  |
+| Database         | PostgreSQL 16                  |
 | ORM              | Doctrine ORM                   |
 | JWT              | lcobucci/jwt                   |
 | Testing          | PHPUnit                        |
-| Servidor web     | Nginx (Alpine)                 |
-| Contenedores     | Docker + Docker Compose        |
+| Web server       | Nginx (Alpine)                 |
+| Containers       | Docker + Docker Compose        |
 
 ---
 
-## Comandos de Desarrollo
+## Development Commands
 
 ```bash
-# Levantar entorno
+# Start environment
 docker compose up -d
 
-# Ejecutar tests (todos)
+# Run tests (all)
 docker compose exec php bin/phpunit
 
-# Ejecutar solo tests unitarios
+# Run unit tests only
 docker compose exec php bin/phpunit --testsuite=Unit
 
-# Ejecutar solo tests de integración
+# Run integration tests only
 docker compose exec php bin/phpunit --testsuite=Integration
 
-# Ejecutar solo tests funcionales
+# Run functional tests only
 docker compose exec php bin/phpunit --testsuite=Functional
 
-# Crear migración
+# Create migration
 docker compose exec php bin/console doctrine:migrations:diff
 
-# Ejecutar migraciones
+# Run migrations
 docker compose exec php bin/console doctrine:migrations:migrate
 
-# Consola Symfony
+# Symfony console
 docker compose exec php bin/console
 ```
 
