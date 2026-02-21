@@ -1,0 +1,22 @@
+FROM php:8.3-fpm-alpine AS builder
+
+RUN apk add --no-cache git unzip libpq-dev libzip-dev \
+    && docker-php-ext-install pdo_pgsql zip opcache
+
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+WORKDIR /app
+
+COPY app/composer.* ./
+RUN composer install --no-dev --prefer-dist --no-progress
+
+COPY app/ .
+RUN composer dump-autoload --classmap-authoritative
+
+FROM php:8.3-fpm-alpine
+RUN apk add --no-cache libpq libzip \
+    && docker-php-ext-install pdo_pgsql zip opcache
+
+WORKDIR /var/www/html
+COPY --from=builder /app .
+
+USER www-data
