@@ -202,29 +202,29 @@ tests/
   - `InvalidEmailException`
   - `WeakPasswordException`
 
-### Iteración 4 — Auth Application: Use Cases
-> Casos de uso orquestando dominio a través de puertos. TDD con mocks.
+### Iteración 4 — Auth Application: Use Cases ✅
+> Casos de uso orquestando dominio a través de puertos. TDD con mocks/stubs.
 
-- [ ] **Impl**: Puertos secundarios (interfaces):
+- [x] **Impl**: Puertos secundarios (interfaces):
   - `PasswordHasher` — `hash(PlainPassword): HashedPassword`, `verify(PlainPassword, HashedPassword): bool`
   - `TokenGenerator` — `generate(User): string`
   - `TokenDecoder` — `decode(string): array` (payload)
-- [ ] **Impl**: `AuthTokenResponse` DTO — `token`, `expiresIn`
-- [ ] **Impl**: `UserProfileResponse` DTO — `id`, `email`
-- [ ] **Test**: `RegisterUserCommandHandlerTest`:
-  - Registro exitoso devuelve void (o DTO)
+- [x] **Impl**: `AuthTokenResponse` DTO — `token`, `expiresIn` (readonly class)
+- [x] **Impl**: `UserProfileResponse` DTO — `id`, `email` (readonly class)
+- [x] **Test**: `RegisterUserCommandHandlerTest` (3 tests):
+  - Registro exitoso guarda User via repositorio
   - Email duplicado lanza `UserAlreadyExistsException`
-  - Password débil lanza `WeakPasswordException`
-- [ ] **Impl**: `RegisterUserCommand` + `RegisterUserCommandHandler`
-- [ ] **Test**: `AuthenticateUserCommandHandlerTest`:
+  - Password débil lanza `WeakPasswordException` (antes de llegar al repo)
+- [x] **Impl**: `RegisterUserCommand` + `RegisterUserCommandHandler`
+- [x] **Test**: `AuthenticateUserCommandHandlerTest` (3 tests):
   - Login exitoso devuelve `AuthTokenResponse`
   - Email inexistente lanza `InvalidCredentialsException`
-  - Password incorrecta lanza `InvalidCredentialsException` (mismo error, no revelar qué falló)
-- [ ] **Impl**: `AuthenticateUserCommand` + `AuthenticateUserCommandHandler`
-- [ ] **Test**: `GetUserProfileQueryHandlerTest`:
+  - Password incorrecta lanza `InvalidCredentialsException` (mismo error)
+- [x] **Impl**: `AuthenticateUserCommand` + `AuthenticateUserCommandHandler`
+- [x] **Test**: `GetUserProfileQueryHandlerTest` (2 tests):
   - Devuelve `UserProfileResponse` con datos correctos
-  - Usuario no encontrado lanza excepción
-- [ ] **Impl**: `GetUserProfileQuery` + `GetUserProfileQueryHandler`
+  - Usuario no encontrado lanza `DomainException`
+- [x] **Impl**: `GetUserProfileQuery` + `GetUserProfileQueryHandler`
 
 ### Iteración 5 — Auth Infrastructure: Adaptadores
 > Implementaciones concretas de los puertos. Tests de integración.
@@ -344,7 +344,7 @@ docker compose exec php bin/console
 
 ## Estado Actual
 
-> **Iteración activa**: Iteración 4 — Auth Application: Use Cases
+> **Iteración activa**: Iteración 5 — Auth Infrastructure: Adaptadores
 
 | Iteración | Estado        |
 |-----------|---------------|
@@ -352,7 +352,7 @@ docker compose exec php bin/console
 | 1         | ✅ Completada |
 | 2         | ✅ Completada |
 | 3         | ✅ Completada |
-| 4         | ⬜ Pendiente  |
+| 4         | ✅ Completada |
 | 5         | ⬜ Pendiente  |
 | 6         | ⬜ Pendiente  |
 | 7         | ⬜ Pendiente  |
