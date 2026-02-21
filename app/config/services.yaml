@@ -1,4 +1,5 @@
 parameters:
+    jwt_secret: '%env(JWT_SECRET)%'
 
 services:
     _defaults:
@@ -10,3 +11,31 @@ services:
 
     App\Auth\Infrastructure\:
         resource: '../src/Auth/Infrastructure/'
+        exclude:
+            - '../src/Auth/Infrastructure/Persistence/Type/'
+            - '../src/Auth/Infrastructure/Persistence/Mapping/'
+
+    # Port -> Adapter bindings
+    App\Auth\Domain\Port\UserRepository:
+        alias: App\Auth\Infrastructure\Persistence\DoctrineUserRepository
+
+    App\Auth\Domain\Port\RefreshTokenRepository:
+        alias: App\Auth\Infrastructure\Persistence\DoctrineRefreshTokenRepository
+
+    App\Auth\Application\Port\PasswordHasher:
+        alias: App\Auth\Infrastructure\Security\SymfonyPasswordHasher
+
+    App\Auth\Application\Port\TokenGenerator:
+        alias: App\Auth\Infrastructure\Security\JwtTokenGenerator
+
+    App\Auth\Application\Port\TokenDecoder:
+        alias: App\Auth\Infrastructure\Security\JwtTokenDecoder
+
+    # JWT secret injection
+    App\Auth\Infrastructure\Security\JwtTokenGenerator:
+        arguments:
+            $jwtSecret: '%jwt_secret%'
+
+    App\Auth\Infrastructure\Security\JwtTokenDecoder:
+        arguments:
+            $jwtSecret: '%jwt_secret%'
