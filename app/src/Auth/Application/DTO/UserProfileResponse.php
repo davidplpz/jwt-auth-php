@@ -1,0 +1,14 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Auth\Application\DTO;
+
+final readonly class UserProfileResponse
+{
+    public function __construct(
+        public string $id,
+        public string $email,
+    ) {
+    }
+}
