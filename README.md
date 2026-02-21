@@ -164,15 +164,15 @@ tests/
 - [x] Verificar que Docker levanta correctamente con las nuevas dependencias
 - [x] Verificar PHPUnit (smoke test OK, PHPUnit 12.5.14, PHP 8.3.30)
 
-### Iteración 1 — Shared Kernel
+### Iteración 1 — Shared Kernel ✅
 > Abstracciones base reutilizables. TDD: tests primero.
 
-- [ ] **Test**: `StringValueObjectTest` — igualdad, inmutabilidad, valor vacío
-- [ ] **Impl**: `StringValueObject` — clase abstracta base
-- [ ] **Test**: `UuidValueObjectTest` — formato válido, generación, igualdad
-- [ ] **Impl**: `UuidValueObject` — clase abstracta con validación UUID
-- [ ] **Impl**: `DomainEvent` — interfaz con `occurredOn()`, `eventName()`
-- [ ] **Impl**: `AggregateRoot` — clase abstracta con `record()` y `pullDomainEvents()`
+- [x] **Test**: `StringValueObjectTest` — igualdad, inmutabilidad, valor vacío (5 tests)
+- [x] **Impl**: `StringValueObject` — clase abstracta base
+- [x] **Test**: `UuidValueObjectTest` — formato válido, generación, igualdad (7 tests)
+- [x] **Impl**: `UuidValueObject` — clase abstracta con validación UUID (usa `symfony/uid`)
+- [x] **Impl**: `DomainEvent` — interfaz con `occurredOn()`, `eventName()`
+- [x] **Impl**: `AggregateRoot` — clase abstracta con `record()` y `pullDomainEvents()`
 
 ### Iteración 2 — Auth Domain: Value Objects
 > Modelar los bloques fundamentales del dominio. TDD estricto.
@@ -344,12 +344,12 @@ docker compose exec php bin/console
 
 ## Estado Actual
 
-> **Iteración activa**: Iteración 1 — Shared Kernel
+> **Iteración activa**: Iteración 2 — Auth Domain: Value Objects
 
 | Iteración | Estado        |
 |-----------|---------------|
 | 0         | ✅ Completada |
-| 1         | ⬜ Pendiente  |
+| 1         | ✅ Completada |
 | 2         | ⬜ Pendiente  |
 | 3         | ⬜ Pendiente  |
 | 4         | ⬜ Pendiente  |
