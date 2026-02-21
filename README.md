@@ -174,29 +174,29 @@ tests/
 - [x] **Impl**: `DomainEvent` — interfaz con `occurredOn()`, `eventName()`
 - [x] **Impl**: `AggregateRoot` — clase abstracta con `record()` y `pullDomainEvents()`
 
-### Iteración 2 — Auth Domain: Value Objects
+### Iteración 2 — Auth Domain: Value Objects ✅
 > Modelar los bloques fundamentales del dominio. TDD estricto.
 
-- [ ] **Test**: `UserIdTest` — creación, igualdad, formato UUID
-- [ ] **Impl**: `UserId extends UuidValueObject`
-- [ ] **Test**: `EmailTest` — email válido, email inválido lanza excepción, igualdad case-insensitive
-- [ ] **Impl**: `Email` — validación con regex, normalización lowercase
-- [ ] **Test**: `PlainPasswordTest` — longitud mínima 8, requiere mayúscula, número y especial
-- [ ] **Impl**: `PlainPassword` — validaciones de fuerza en constructor
-- [ ] **Test**: `HashedPasswordTest` — creación desde hash, no puede estar vacío
-- [ ] **Impl**: `HashedPassword` — wrapper inmutable sobre el hash
+- [x] **Test**: `UserIdTest` — creación, igualdad, formato UUID (4 tests)
+- [x] **Impl**: `UserId extends UuidValueObject`
+- [x] **Test**: `EmailTest` — email válido, email inválido lanza excepción, igualdad case-insensitive (8 tests)
+- [x] **Impl**: `Email` — validación con `filter_var`, normalización lowercase
+- [x] **Test**: `PlainPasswordTest` — longitud mínima 8, requiere mayúscula, minúscula, número y especial (7 tests)
+- [x] **Impl**: `PlainPassword` — validaciones de fuerza en constructor
+- [x] **Test**: `HashedPasswordTest` — creación desde hash, no puede estar vacío (3 tests)
+- [x] **Impl**: `HashedPassword` — wrapper inmutable con named constructor `fromHash()`
 
-### Iteración 3 — Auth Domain: Aggregate Root y Puertos
+### Iteración 3 — Auth Domain: Aggregate Root y Puertos ✅
 > Entidad User como aggregate root con sus invariantes. TDD.
 
-- [ ] **Test**: `UserTest` — creación con factory method `register()`, emite `UserRegistered`
-- [ ] **Test**: `UserTest` — no permite email duplicado (a nivel de dominio, invariantes)
-- [ ] **Test**: `UserTest` — expone datos via value objects
-- [ ] **Impl**: `User` — Aggregate Root con `register()` static factory, propiedades privadas
-- [ ] **Impl**: `UserRegistered` domain event
-- [ ] **Impl**: `UserAuthenticated` domain event
-- [ ] **Impl**: `UserRepository` — interfaz (puerto) con `save()`, `findByEmail()`, `findById()`
-- [ ] **Impl**: Excepciones de dominio:
+- [x] **Test**: `UserTest` — creación con factory method `register()`, emite `UserRegistered` (6 tests)
+- [x] **Test**: `UserTest` — `pullDomainEvents()` limpia buffer tras lectura
+- [x] **Test**: `UserTest` — expone datos via value objects (`id()`, `email()`, `password()`)
+- [x] **Impl**: `User` — Aggregate Root con `register()` static factory, propiedades privadas
+- [x] **Impl**: `UserRegistered` domain event
+- [x] **Impl**: `UserAuthenticated` domain event
+- [x] **Impl**: `UserRepository` — interfaz (puerto) con `save()`, `findByEmail()`, `findById()`
+- [x] **Impl**: Excepciones de dominio:
   - `InvalidCredentialsException`
   - `UserAlreadyExistsException`
   - `InvalidEmailException`
@@ -344,14 +344,14 @@ docker compose exec php bin/console
 
 ## Estado Actual
 
-> **Iteración activa**: Iteración 2 — Auth Domain: Value Objects
+> **Iteración activa**: Iteración 4 — Auth Application: Use Cases
 
 | Iteración | Estado        |
 |-----------|---------------|
 | 0         | ✅ Completada |
 | 1         | ✅ Completada |
-| 2         | ⬜ Pendiente  |
-| 3         | ⬜ Pendiente  |
+| 2         | ✅ Completada |
+| 3         | ✅ Completada |
 | 4         | ⬜ Pendiente  |
 | 5         | ⬜ Pendiente  |
 | 6         | ⬜ Pendiente  |
