@@ -145,22 +145,24 @@ tests/
 
 ## Plan de Iteraciones
 
-### Iteración 0 — Setup del proyecto
+### Iteración 0 — Setup del proyecto ✅
 > Preparar el entorno, dependencias y configuración base.
 
-- [ ] Instalar dependencias PHP:
+- [x] Instalar dependencias PHP:
   - `symfony/security-bundle` (autenticación Symfony)
   - `doctrine/orm`, `doctrine/doctrine-bundle`, `doctrine/doctrine-migrations-bundle` (persistencia)
-  - `lcobucci/jwt` (generación/validación JWT standalone)
+  - `lcobucci/jwt 5.6` (generación/validación JWT standalone)
   - `symfony/uid` (UUIDs)
-  - `phpunit/phpunit` (testing, require-dev)
+  - `phpunit/phpunit 12.5` (testing, require-dev)
   - `symfony/test-pack` (testing con Symfony, require-dev)
-- [ ] Configurar `phpunit.xml.dist` con suites: Unit, Integration, Functional
-- [ ] Configurar `services.yaml` para escanear la estructura hexagonal
-- [ ] Ajustar `autoload` en `composer.json` si es necesario
-- [ ] Crear directorios base (`Auth/Domain/`, `Auth/Application/`, etc.)
-- [ ] Verificar que Docker levanta correctamente con las nuevas dependencias
-- [ ] Ejecutar un test vacío para confirmar que PHPUnit funciona
+- [x] Eliminar bundles de frontend innecesarios (`ux-turbo`, `webpack-encore`)
+- [x] Eliminar servicio `node` de `docker-compose.yml`
+- [x] Configurar `phpunit.dist.xml` con suites: Unit, Integration, Functional
+- [x] Configurar `services.yaml` para escanear la estructura hexagonal
+- [x] Configurar Doctrine mapping XML apuntando a `Auth/Infrastructure/Persistence/Mapping`
+- [x] Crear directorios base de toda la arquitectura
+- [x] Verificar que Docker levanta correctamente con las nuevas dependencias
+- [x] Verificar PHPUnit (smoke test OK, PHPUnit 12.5.14, PHP 8.3.30)
 
 ### Iteración 1 — Shared Kernel
 > Abstracciones base reutilizables. TDD: tests primero.
@@ -342,16 +344,16 @@ docker compose exec php bin/console
 
 ## Estado Actual
 
-> **Iteración activa**: Iteración 0 — Setup del proyecto
+> **Iteración activa**: Iteración 1 — Shared Kernel
 
-| Iteración | Estado      |
-|-----------|-------------|
-| 0         | ⬜ Pendiente |
-| 1         | ⬜ Pendiente |
-| 2         | ⬜ Pendiente |
-| 3         | ⬜ Pendiente |
-| 4         | ⬜ Pendiente |
-| 5         | ⬜ Pendiente |
-| 6         | ⬜ Pendiente |
-| 7         | ⬜ Pendiente |
-| 8         | ⬜ Pendiente |
+| Iteración | Estado        |
+|-----------|---------------|
+| 0         | ✅ Completada |
+| 1         | ⬜ Pendiente  |
+| 2         | ⬜ Pendiente  |
+| 3         | ⬜ Pendiente  |
+| 4         | ⬜ Pendiente  |
+| 5         | ⬜ Pendiente  |
+| 6         | ⬜ Pendiente  |
+| 7         | ⬜ Pendiente  |
+| 8         | ⬜ Pendiente  |
