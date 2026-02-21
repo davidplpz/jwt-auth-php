@@ -15,6 +15,7 @@ use App\Auth\Domain\Model\HashedPassword;
 use App\Auth\Domain\Model\PlainPassword;
 use App\Auth\Domain\Model\User;
 use App\Auth\Domain\Model\UserId;
+use App\Auth\Domain\Port\RefreshTokenRepository;
 use App\Auth\Domain\Port\UserRepository;
 use PHPUnit\Framework\TestCase;
 
@@ -28,6 +29,7 @@ final class AuthenticateUserCommandHandlerTest extends TestCase
     private UserRepository&\PHPUnit\Framework\MockObject\Stub $userRepository;
     private PasswordHasher&\PHPUnit\Framework\MockObject\Stub $passwordHasher;
     private TokenGenerator&\PHPUnit\Framework\MockObject\Stub $tokenGenerator;
+    private RefreshTokenRepository&\PHPUnit\Framework\MockObject\Stub $refreshTokenRepository;
     private AuthenticateUserCommandHandler $handler;
 
     protected function setUp(): void
@@ -35,10 +37,12 @@ final class AuthenticateUserCommandHandlerTest extends TestCase
         $this->userRepository = $this->createStub(UserRepository::class);
         $this->passwordHasher = $this->createStub(PasswordHasher::class);
         $this->tokenGenerator = $this->createStub(TokenGenerator::class);
+        $this->refreshTokenRepository = $this->createStub(RefreshTokenRepository::class);
         $this->handler = new AuthenticateUserCommandHandler(
             $this->userRepository,
             $this->passwordHasher,
             $this->tokenGenerator,
+            $this->refreshTokenRepository,
         );
     }
 
@@ -55,6 +59,7 @@ final class AuthenticateUserCommandHandlerTest extends TestCase
         $this->assertInstanceOf(AuthTokenResponse::class, $response);
         $this->assertSame(self::TOKEN, $response->token);
         $this->assertGreaterThan(0, $response->expiresIn);
+        $this->assertNotNull($response->refreshToken);
     }
 
     public function testThrowsWhenUserNotFound(): void

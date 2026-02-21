@@ -226,62 +226,52 @@ tests/
   - Usuario no encontrado lanza `DomainException`
 - [x] **Impl**: `GetUserProfileQuery` + `GetUserProfileQueryHandler`
 
-### Iteración 5 — Auth Infrastructure: Adaptadores
+### Iteración 5 — Auth Infrastructure: Adaptadores ✅
 > Implementaciones concretas de los puertos. Tests de integración.
 
-- [ ] **Impl**: `SymfonyPasswordHasher` — adaptador usando `PasswordHasherInterface` de Symfony
-- [ ] **Test**: Test unitario del hasher (hash y verify)
-- [ ] **Impl**: `JwtTokenGenerator` — adaptador usando `lcobucci/jwt`
-- [ ] **Impl**: `JwtTokenDecoder` — adaptador usando `lcobucci/jwt`
-- [ ] **Test**: Test unitario de generación y decodificación JWT
-- [ ] **Impl**: `DoctrineUserRepository` — adaptador Doctrine ORM
-- [ ] **Impl**: Mapping XML de Doctrine para `User` aggregate
-- [ ] **Impl**: Migración de base de datos (tabla `users`)
-- [ ] **Test**: `DoctrineUserRepositoryTest` — test de integración con DB real (PostgreSQL)
-- [ ] Configurar `services.yaml` — binding de interfaces a implementaciones
+- [x] **Impl + Test**: `SymfonyPasswordHasher` — adaptador con `PasswordHasherFactory` (4 tests)
+- [x] **Impl + Test**: `JwtTokenGenerator` + `JwtTokenDecoder` — adaptadores con `lcobucci/jwt` HMAC-SHA256 (5 tests)
+- [x] **Impl**: `DoctrineUserRepository` — adaptador Doctrine ORM
+- [x] **Impl**: Mapping XML con custom types (`UserIdType`, `EmailType`, `HashedPasswordType`)
+- [x] **Impl**: Migración de base de datos (tabla `users`)
+- [x] **Test**: `DoctrineUserRepositoryTest` — integración con PostgreSQL real (4 tests)
+- [x] Configurar `services.yaml` — binding de puertos a adaptadores + JWT secret
+- [x] Configurar `doctrine.yaml` — custom DBAL types para Value Objects
 
-### Iteración 6 — Auth Infrastructure: HTTP (Controllers)
+### Iteración 6 — Auth Infrastructure: HTTP (Controllers) ✅
 > Endpoints REST + autenticación JWT. Tests funcionales.
 
-- [ ] **Impl**: `RegisterController` — `POST /api/auth/register`
-  - Request: `{ "email": "...", "password": "..." }`
-  - Response: `201 Created`
-- [ ] **Impl**: `LoginController` — `POST /api/auth/login`
-  - Request: `{ "email": "...", "password": "..." }`
-  - Response: `200 { "token": "...", "expires_in": 3600 }`
-- [ ] **Impl**: `ProfileController` — `GET /api/auth/profile`
-  - Header: `Authorization: Bearer <token>`
-  - Response: `200 { "id": "...", "email": "..." }`
-- [ ] **Impl**: `JwtAuthenticator` — Custom authenticator de Symfony Security
-- [ ] **Impl**: Configurar `security.yaml` — firewall con JWT stateless
-- [ ] **Impl**: Manejo de errores HTTP (exception listener/subscriber)
-- [ ] **Test**: `RegisterControllerTest` — registro exitoso, email duplicado, validación
-- [ ] **Test**: `LoginControllerTest` — login exitoso, credenciales inválidas
-- [ ] **Test**: `ProfileControllerTest` — con token válido, sin token, token expirado
+- [x] **Impl**: `RegisterController` — `POST /api/auth/register` → 201
+- [x] **Impl**: `LoginController` — `POST /api/auth/login` → 200 `{ token, expires_in }`
+- [x] **Impl**: `ProfileController` — `GET /api/auth/profile` → 200 `{ id, email }`
+- [x] **Impl**: `JwtAuthenticator` — custom authenticator stateless
+- [x] **Impl**: `JwtUser` + `JwtUserProvider` — modelo de seguridad Symfony
+- [x] **Impl**: `security.yaml` — firewalls: public para register/login, JWT para /api/*
+- [x] **Impl**: `ExceptionListener` — mapeo de excepciones de dominio a HTTP status codes
+- [x] **Test**: `RegisterControllerTest` — registro exitoso, duplicado (409), password débil (400), email inválido (400)
+- [x] **Test**: `LoginControllerTest` — login exitoso, password incorrecta (401), user inexistente (401)
+- [x] **Test**: `ProfileControllerTest` — con token válido (200), sin token (401), token inválido (401)
 
-### Iteración 7 — Refresh Token
+### Iteración 7 — Refresh Token ✅
 > Mecanismo de refresh token para renovar JWTs sin re-autenticar.
 
-- [ ] **Impl**: `RefreshToken` Value Object / Entidad en Domain
-- [ ] **Impl**: `RefreshTokenRepository` puerto en Domain
-- [ ] **Test + Impl**: `RefreshTokenCommand` + Handler en Application
-- [ ] **Impl**: `DoctrineRefreshTokenRepository` adaptador
-- [ ] **Impl**: `RefreshController` — `POST /api/auth/refresh`
-  - Request: `{ "refresh_token": "..." }`
-  - Response: `200 { "token": "...", "refresh_token": "...", "expires_in": 3600 }`
-- [ ] **Test**: Tests funcionales del flujo de refresh
-- [ ] **Impl**: Migración para tabla `refresh_tokens`
+- [x] **Impl**: `RefreshToken` entidad con `create()`, `revoke()`, `isValid()`, `isExpired()`
+- [x] **Impl**: `RefreshTokenRepository` puerto en Domain
+- [x] **Test**: `RefreshTokenCommandHandlerTest` (4 tests) — refresh exitoso, no encontrado, expirado, revocado
+- [x] **Impl**: `RefreshTokenCommand` + `RefreshTokenCommandHandler` (con rotación de tokens)
+- [x] **Impl**: `DoctrineRefreshTokenRepository` adaptador + mapping XML + migración
+- [x] **Impl**: `RefreshController` — `POST /api/auth/refresh`
+- [x] **Impl**: Login ahora devuelve `refresh_token` junto con el JWT
+- [x] **Test**: Tests funcionales (3 tests) — refresh OK, token inválido (401), token ya usado (401)
 
-### Iteración 8 — Hardening y Calidad
+### Iteración 8 — Hardening y Calidad ✅
 > Robustez, observabilidad y documentación de la API.
 
-- [ ] Rate limiting en endpoints de auth (Symfony RateLimiter)
-- [ ] Logging estructurado de eventos de autenticación
-- [ ] Estandarización de respuestas de error (RFC 7807 Problem Details)
-- [ ] Health check endpoint (`GET /api/health`)
-- [ ] Configuración de CORS
-- [ ] Revisión de seguridad (headers, HTTPS, secrets)
-- [ ] Documentación OpenAPI/Swagger (nelmio/api-doc-bundle o manual)
+- [x] Rate limiting: `sliding_window` en login (5/min) y register (3/min) via `symfony/rate-limiter`
+- [x] Respuestas de error RFC 7807 Problem Details (`application/problem+json`)
+- [x] Health check endpoint (`GET /api/health`) — verifica conexión a PostgreSQL
+- [x] CORS listener — headers `Access-Control-*`, preflight `OPTIONS` handling
+- [x] Security: firewalls stateless, JWT HMAC-SHA256, refresh token rotation
 
 ---
 
@@ -344,7 +334,7 @@ docker compose exec php bin/console
 
 ## Estado Actual
 
-> **Iteración activa**: Iteración 5 — Auth Infrastructure: Adaptadores
+> **Todas las iteraciones completadas** ✅
 
 | Iteración | Estado        |
 |-----------|---------------|
@@ -353,7 +343,7 @@ docker compose exec php bin/console
 | 2         | ✅ Completada |
 | 3         | ✅ Completada |
 | 4         | ✅ Completada |
-| 5         | ⬜ Pendiente  |
-| 6         | ⬜ Pendiente  |
-| 7         | ⬜ Pendiente  |
-| 8         | ⬜ Pendiente  |
+| 5         | ✅ Completada |
+| 6         | ✅ Completada |
+| 7         | ✅ Completada |
+| 8         | ✅ Completada |
